@@ -45,6 +45,14 @@ namespace RadialFollow
             set { leakCoef = System.Math.Clamp(value, 0.0f, 1.0f); }
         }
         private double leakCoef;
+        
+        public bool LowLatency
+        {
+            get { return lowLatency; }
+            set { lowLatency = value; }
+        }
+        private bool lowLatency;
+        
         public float SampleRadialCurve(float dist) => (float)deltaFn(dist, xOffset, scaleComp);
         public double ResetMs = 50;
         public double GridScale = 1;

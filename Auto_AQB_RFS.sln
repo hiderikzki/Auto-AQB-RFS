@@ -3,21 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30615.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTabletDriver.Plugin", ".modules\OpenTabletDriver\OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj", "{49359233-BAF9-4D4B-A61E-8211256DBE7B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BezierInterpolator", "BezierInterpolator\BezierInterpolator.csproj", "{205D626F-299D-4BC1-906A-707700E7C7ED}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RadialFollow", "RadialFollow\RadialFollow.csproj", "{1A38AD2D-E0EB-4B1A-92F9-250F2CCA222E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TouchTapping", "TouchTapping\TouchTapping.csproj", "{E0439839-9F9D-4DAD-8A7E-1ED0A027555C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A2F7556}") = "SinCursor", "SinCursor\SinCursor.csproj", "{E0439839-9F9D-4DAD-8A7E-1ED0A022555C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidNibbler", "RapidNibbler\RapidNibbler.csproj", "{1201B5D0-6EB9-4CCC-A42C-9294102255F9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".modules", ".modules", "{E2114307-2481-EC75-13D9-9A99B704567F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenTabletDriver", "OpenTabletDriver", "{197B7570-F1A3-EA30-0D8B-DA7EE423C043}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,102 +1,124 @@
 ﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Numerics;
+using OpenTabletDriver;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace RadialFollow
 {
-    [PluginName("AbstractQbit's Radial Follow Smoothing (Tablet coordinates)")]
+    [PluginName("AbstractQbit's Radial Follow Smoothing w/Mixmg (Tablet coordinates)")]
     public class RadialFollowSmoothingTabletSpace : IPositionedPipelineElement<IDeviceReport>
     {
         public RadialFollowSmoothingTabletSpace() : base() { }
+        
         public PipelinePosition Position => PipelinePosition.PreTransform;
-
-        [Property("Outer Radius"), DefaultPropertyValue(1.0d), Unit("mm"), ToolTip
-        (
-            "Outer radius defines the max distance the cursor can lag behind the actual reading.\n\n" +
-            "Unit of measurement is millimetres.\n" +
-            "The value should be >= 0 and inner radius.\n" +
-            "If smoothing leak is used, defines the point at which smoothing will be reduced,\n" +
-            "instead of hard clamping the max distance between the tablet position and a cursor.\n\n" +
-            "Default value is 1.0 mm"
-        )]
-        public double OuterRadius
+        
+        [Property("Smaller Cursor Lag, Less Precision"), DefaultPropertyValue(false)]
+        public bool LowLatency
         {
-            get => radialCore.OuterRadius;
-            set { radialCore.OuterRadius = value; }
+            get => radialCore.LowLatency;
+            set
+            {
+                radialCore.LowLatency = value;
+            }
         }
 
-        [Property("Inner Radius"), DefaultPropertyValue(0.0d), Unit("mm"), ToolTip
-        (
-            "Inner radius defines the max distance the tablet reading can deviate from the cursor without moving it.\n" +
-            "This effectively creates a deadzone in which no movement is produced.\n\n" +
-            "Unit of measurement is millimetres.\n" +
-            "The value should be >= 0 and <= outer radius.\n\n" +
-            "Default value is 0.0 mm"
-        )]
-        public double InnerRadius
-        {
-            get => radialCore.InnerRadius;
-            set { radialCore.InnerRadius = value; }
-        }
 
-        [Property("Initial Smoothing Coefficient"), DefaultPropertyValue(0.95d), ToolTip
-        (
-            "Smoothing coefficient determines how fast or slow the cursor will descend from the outer radius to the inner.\n\n" +
-            "Possible value range is 0.0001..1, higher values mean more smoothing (slower descent to the inner radius).\n\n" +
-            "Default value is 0.95"
-        )]
-        public double SmoothingCoefficient
+        private double Log1p(double x)
         {
-            get => radialCore.SmoothingCoefficient;
-            set { radialCore.SmoothingCoefficient = value; }
-        }
+            if (double.IsNaN(x) || double.IsPositiveInfinity(x)) return x;
+            if (x < -1.0) return double.NaN;
+            if (x == -1.0) return double.NegativeInfinity;
 
-        [Property("Soft Knee Scale"), DefaultPropertyValue(1.0d), ToolTip
-        (
-            "Soft knee scale determines how soft the transition between smoothing inside and outside the outer radius is.\n\n" +
-            "Possible value range is 0..100, higher values mean softer transition.\n" +
-            "The effect is somewhat logarithmic, i.e. most of the change happens closer to zero.\n\n" +
-            "Default value is 1.0"
-        )]
-        public double SoftKneeScale
-        {
-            get => radialCore.SoftKneeScale;
-            set { radialCore.SoftKneeScale = value; }
+            double u = 1.0 + x;
+            if (u == 1.0) return x;
+            return Math.Log(u) * x / (u - 1.0);
         }
-
-        [Property("Smoothing Leak Coefficient"), DefaultPropertyValue(0.0d), ToolTip
-        (
-            "Smoothing leak coefficient allows for input smooting to continue past outer radius at a reduced rate.\n\n" +
-            "Possible value range is 0..1, 0 means no smoothing past outer radius, 1 means 100% of the smoothing gets through.\n\n" +
-            "Default value is 0.0"
-        )]
-        public double SmoothingLeakCoefficient
+        
+        private double Lerp(double a, double b, double t) {
+            return t * a + (1 - t) * b;
+        }
+        
+        // https://mixmg.github.io/smoothing/smoothing-calculator.html
+        private void UpdateCalculations(double width, double height)
         {
-            get => radialCore.SmoothingLeakCoefficient;
-            set { radialCore.SmoothingLeakCoefficient = value; }
+            const double K_OUTER = 0.0298;
+            const double K_INNER = 0.0065;
+            const double K_KNEE = 0.5;
+
+            double LEAK_BASE = 0.3;
+            if (radialCore.LowLatency)
+            {
+                LEAK_BASE = 0.17;
+            }
+
+            double outerRaw = K_OUTER * width;
+            double innerRaw = K_INNER * height;
+            
+            // const double EPSILON = 1e-6;
+            // double unused = Log1p(Math.Pow(outerRaw / (innerRaw + EPSILON), 0.6));
+
+            double kneeInput = Math.Tanh(K_KNEE * (outerRaw - innerRaw));
+            double softKneeScale = Log1p(Math.Exp(-kneeInput));
+            double outerRadius = Lerp(outerRaw, 0, 0.3);
+            double aspectRatio = width / height;
+            double leakCoeff = LEAK_BASE * Log1p(aspectRatio);
+            
+            radialCore.OuterRadius = outerRadius;
+            radialCore.InnerRadius = innerRaw;
+            radialCore.SoftKneeScale = softKneeScale;
+            radialCore.SmoothingCoefficient = innerRaw;
+            radialCore.SmoothingLeakCoefficient = leakCoeff;
+            
+            Log.Write("RadialFollow+Mixmg", "Tablet Dimensions: " + width + "x" + height + " (" + aspectRatio + ":1)", LogLevel.Info);
+            Log.Write("RadialFollow+Mixmg", "Outer: " + radialCore.OuterRadius + "mm, Inner: " + radialCore.InnerRadius + "mm, Initial: " + radialCore.SmoothingCoefficient + ", Soft Knee: " + radialCore.SoftKneeScale + ", SLC: " + radialCore.SmoothingLeakCoefficient, LogLevel.Info);
         }
 
         public event Action<IDeviceReport> Emit;
 
         public void Consume(IDeviceReport value)
         {
+            if (Driver is Driver driver)
+            {
+                var tree = driver.InputDevices.FirstOrDefault(t => t.Properties.Name == TabletReference.Properties.Name);
+                if (tree?.OutputMode is AbsoluteOutputMode abs)
+                {
+                    if (Math.Abs(tabletSize.X - abs.Input.Width) > 0.01 || Math.Abs(tabletSize.Y - abs.Input.Height) > 0.01)
+                    {
+                        Log.Write("RadialFollow+Mixmg", "Tablet dimensions updated, recalculating...", LogLevel.Info);
+                        UpdateCalculations(abs.Input.Width, abs.Input.Height);
+                    }
+                    
+                    tabletSize = new Vector2(abs.Input.Width, abs.Input.Height);
+                }
+            }
+            
             if (value is ITabletReport report)
             {
                 report.Position = radialCore.Filter(report.Position * mmScale) / mmScale;
                 value = report;
             }
+            
             Emit?.Invoke(value);
         }
 
         RadialFollowCore radialCore = new RadialFollowCore();
 
+        [Resolved]
+        public IDriver Driver { get; set; }
+        
         [TabletReference]
         public TabletReference TabletReference
         {
+            get => tabletReference;
             set
             {
+                tabletReference = value;
                 var digitizer = value.Properties.Specifications.Digitizer;
                 mmScale = new Vector2
                 {
@@ -105,6 +127,9 @@ namespace RadialFollow
                 };
             }
         }
+
         private Vector2 mmScale = Vector2.One;
+        private Vector2 tabletSize = new(-1, -1);
+        private TabletReference tabletReference;
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="36079e88-6af2-45af-85e3-c06c76f5077d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.modules/OpenTabletDriver" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AbstractOTDPlugins.sln" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BezierInterpolator/BezierInterp.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BezierInterpolator/BezierInterpolator.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Directory.Build.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Build.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RadialFollow/RadialFollow.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RadialFollow/RadialFollow.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RadialFollow/RadialFollowCore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RadialFollow/RadialFollowCore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RadialFollow/RadialFollowSmoothingScreenSpace.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RadialFollow/RadialFollowSmoothingTabletSpace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RadialFollow/RadialFollowSmoothingTabletSpace.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RapidNibbler/RapidNibbler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RapidNibbler/RapidNibbler.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SinCursor/SinCursor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SinCursor/SinCursor.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TouchTapping/TouchTapping.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TouchTapping/TouchTapping.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/build.ps1" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3Ksa2uDwS0I6O2kMJ7kPZaj1Pu1" />
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="36079e88-6af2-45af-85e3-c06c76f5077d" name="Changes" comment="" />
+      <created>1792348529291</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1792348529291</updated>
+      <workItem from="1792348530069" duration="2000" />
+    </task>
+    <servers />
+  </component>
+</project>
