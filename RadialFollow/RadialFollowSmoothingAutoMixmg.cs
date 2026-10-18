@@ -11,10 +11,10 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace RadialFollow
 {
-    [PluginName("AbstractQbit's Radial Follow Smoothing w/Mixmg (Tablet coordinates)")]
-    public class RadialFollowSmoothingTabletSpace : IPositionedPipelineElement<IDeviceReport>
+    [PluginName("AbstractQbit's Radial Follow Smoothing + Auto Mixmg")]
+    public class RadialFollowSmoothingAutoMixmg : IPositionedPipelineElement<IDeviceReport>
     {
-        public RadialFollowSmoothingTabletSpace() : base() { }
+        public RadialFollowSmoothingAutoMixmg() : base() { }
         
         public PipelinePosition Position => PipelinePosition.PreTransform;
         
